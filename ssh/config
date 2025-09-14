@@ -1,0 +1,65 @@
+# Snitcher Remote Access SSH Configuration
+# Smart routing that works both on local network and remotely
+
+# Gateway node (always accessible via public IP)
+Host gateway cooperator-remote
+    HostName 47.155.237.161
+    User crtr
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+
+# Cluster nodes with automatic network detection
+# These use ProxyCommand to detect if local or remote
+
+Host crtr cooperator
+    HostName 192.168.254.10
+    User crtr
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+    ProxyCommand bash -c "nc -w 1 %h %p 2>/dev/null || ssh gateway -W %h:%p"
+
+Host prtr projector
+    HostName 192.168.254.20
+    User prtr
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+    ProxyCommand bash -c "nc -w 1 %h %p 2>/dev/null || ssh gateway -W %h:%p"
+
+Host drtr director
+    HostName 192.168.254.30
+    User drtr
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+    ProxyCommand bash -c "nc -w 1 %h %p 2>/dev/null || ssh gateway -W %h:%p"
+
+# Direct access when you know you're remote
+Host crtr-remote
+    HostName 192.168.254.10
+    User crtr
+    ProxyJump gateway
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+
+Host prtr-remote
+    HostName 192.168.254.20
+    User prtr
+    ProxyJump gateway
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+
+Host drtr-remote
+    HostName 192.168.254.30
+    User drtr
+    ProxyJump gateway
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+
+# Default SSH options
+Host *
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+    TCPKeepAlive yes
+    Compression yes
+    ForwardAgent no
+    HashKnownHosts no

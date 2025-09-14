@@ -1,0 +1,113 @@
+#!/usr/bin/env zsh
+# Snitcher .zshrc - Lightweight configuration for remote access
+# No dependencies on /cluster-nas - works offline
+
+# Skip for non-interactive shells
+[[ $- != *i* ]] && return
+
+# Basic environment
+export EDITOR="${EDITOR:-vim}"
+export VISUAL="${VISUAL:-vim}"
+export PAGER="${PAGER:-less}"
+
+# Path configuration
+export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+
+# History
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=10000
+SAVEHIST=10000
+setopt SHARE_HISTORY
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_FIND_NO_DUPS
+setopt HIST_IGNORE_SPACE
+
+# Directory options
+setopt AUTO_CD
+setopt AUTO_PUSHD
+setopt PUSHD_IGNORE_DUPS
+setopt PUSHD_SILENT
+
+# Completion
+autoload -Uz compinit && compinit
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' menu select
+
+# Prompt
+autoload -U colors && colors
+PROMPT="%{$fg_bold[green]%}%n@%m%{$reset_color%}:%{$fg_bold[blue]%}%~%{$reset_color%}$ "
+
+# Basic aliases
+alias ls='ls --color=auto 2>/dev/null || ls'
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias grep='grep --color=auto'
+
+# Directory navigation
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+
+# Safety aliases
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+
+# Cluster access functions
+cluster_ssh() {
+    local node="$1"
+    local ip=""
+
+    case "$node" in
+        crtr|cooperator) ip="192.168.254.10" ;;
+        prtr|projector)  ip="192.168.254.20" ;;
+        drtr|director)   ip="192.168.254.30" ;;
+        *) echo "Unknown node: $node"; return 1 ;;
+    esac
+
+    # Check if we can reach the node directly
+    if ping -c 1 -W 1 "$ip" &>/dev/null; then
+        # Direct connection
+        ssh "${node}@${ip}"
+    else
+        # Use jump host (replace with your public IP)
+        ssh -J crtr@47.155.237.161 "${node}@${ip}"
+    fi
+}
+
+# Cluster shortcuts
+alias sshcrtr='cluster_ssh crtr'
+alias sshprtr='cluster_ssh prtr'
+alias sshdrtr='cluster_ssh drtr'
+
+# Git shortcuts
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit'
+alias gp='git push'
+alias gl='git log --oneline -10'
+alias gd='git diff'
+
+# Python virtual environment
+if [[ -d "$HOME/.venv" ]]; then
+    alias venv='source ~/.venv/bin/activate'
+fi
+
+# Key bindings
+bindkey -e  # Emacs mode
+bindkey '^[[3~' delete-char  # Delete key
+bindkey '^[[H' beginning-of-line  # Home key
+bindkey '^[[F' end-of-line  # End key
+
+# Load local customizations if they exist
+if [[ -f "$HOME/.zshrc.local" ]]; then
+    source "$HOME/.zshrc.local"
+fi
+
+# Welcome message
+echo "Snitcher Remote Access Terminal"
+echo "Cluster nodes: crtr, prtr, drtr"
+echo "Use 'sshcrtr', 'sshprtr', 'sshdrtr' for smart routing"

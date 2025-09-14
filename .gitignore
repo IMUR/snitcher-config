@@ -1,0 +1,21 @@
+# Backup files
+*.backup
+*.bak
+*~
+.*.swp
+.*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local customizations
+*.local
+
+# SSH keys (never commit these!)
+id_rsa*
+id_ed25519*
+id_ecdsa*
+id_dsa*
+*.key
+*.pem
