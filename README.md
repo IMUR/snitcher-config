@@ -33,10 +33,11 @@ exec $SHELL
 - No dependencies on `/cluster-nas`
 - Local tool configurations
 
-### 2. SSH Configuration
-- Pre-configured access to cluster nodes
-- Smart ProxyJump through cooperator when remote
-- SSH key management
+### 2. SSH Configuration Enhancement
+- **Preserves your existing SSH config** (crtr, prtr, drtr hosts)
+- **Adds smart routing** (crtr-smart, prtr-smart, drtr-smart) that auto-detects network
+- **Adds explicit remote access** (crtr-remote, prtr-remote, drtr-remote)
+- **No conflicts** with your current setup
 
 ### 3. Essential Tools
 - Git configuration

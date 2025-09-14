@@ -94,10 +94,20 @@ cluster_ssh() {
     fi
 }
 
-# Cluster shortcuts
-alias sshcrtr='cluster_ssh crtr'
-alias sshprtr='cluster_ssh prtr'
-alias sshdrtr='cluster_ssh drtr'
+# Cluster shortcuts - use your existing SSH config hosts first, with smart fallbacks
+alias sshcrtr='ssh crtr'  # Uses your existing SSH config
+alias sshprtr='ssh prtr'  # Uses your existing SSH config
+alias sshdrtr='ssh drtr'  # Uses your existing SSH config
+
+# Smart routing alternatives (auto-detect local vs remote)
+alias sshcrtr-smart='ssh crtr-smart'
+alias sshprtr-smart='ssh prtr-smart'
+alias sshdrtr-smart='ssh drtr-smart'
+
+# Explicit remote access
+alias sshcrtr-remote='ssh crtr-remote'
+alias sshprtr-remote='ssh prtr-remote'
+alias sshdrtr-remote='ssh drtr-remote'
 
 # Git shortcuts
 alias gs='git status'
@@ -125,6 +135,7 @@ fi
 
 # Welcome message
 echo "🌐 Snitcher Remote Access Terminal"
-echo "📡 Cluster nodes: crtr, prtr, drtr"
-echo "🔧 Use 'sshcrtr', 'sshprtr', 'sshdrtr' for smart routing"
+echo "📡 SSH hosts: crtr, prtr, drtr (your existing config)"
+echo "🔧 Smart routing: crtr-smart, prtr-smart, drtr-smart (auto-detects network)"
+echo "🌍 Remote access: crtr-remote, prtr-remote, drtr-remote (explicit remote)"
 echo "💡 Modern tools: eza, bat, fd, rg available"

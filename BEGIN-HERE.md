@@ -15,7 +15,7 @@ This repository makes several assumptions about your snitcher setup. Let's verif
 **ASSUMPTION 3**: You're running Debian 13 (trixie) with zsh as default shell
 **ASSUMPTION 4**: You have modern CLI tools installed (eza, bat, fd, rg)
 **ASSUMPTION 5**: You're authenticated with GitHub as "IMUR"
-**ASSUMPTION 6**: You have multiple SSH keys for cluster access
+**ASSUMPTION 6**: You have SSH config for cluster nodes (crtr, prtr, drtr)
 **ASSUMPTION 7**: Public IP for cluster is 47.155.237.161
 **ASSUMPTION 8**: Cluster nodes are at 192.168.254.10/20/30 (crtr/prtr/drtr)
 
@@ -72,14 +72,14 @@ git config user.name && git config user.email
 # ✅ PASS: Shows "Hi IMUR" and correct email (rjallen22@gmail.com)
 # ❌ FAIL: Different user or authentication issues
 
-# ASSUMPTION 6: Multiple SSH keys for cluster access
+# ASSUMPTION 6: SSH config for cluster nodes
+echo "SSH configuration check:"
+grep -E "^Host (crtr|prtr|drtr)$" ~/.ssh/config 2>/dev/null || echo "No SSH config found"
 echo "SSH key count:"
 ls -la ~/.ssh/id_ed25519* 2>/dev/null | wc -l
-echo "SSH keys:"
-ls ~/.ssh/id_ed25519* 2>/dev/null
-# ✅ PASS: Shows multiple ed25519 keys
-# ⚠️ PARTIAL: Has some keys but different names
-# ❌ FAIL: No ed25519 keys found
+# ✅ PASS: Has SSH config for cluster nodes and multiple keys
+# ⚠️ PARTIAL: Has some SSH setup but different configuration
+# ❌ FAIL: No SSH configuration for cluster nodes
 ```
 
 ### 2.5 Test Assumption 7 & 8: Network Configuration

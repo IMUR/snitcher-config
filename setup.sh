@@ -97,25 +97,33 @@ if command -v zsh &> /dev/null; then
     fi
 fi
 
-# 2. Setup SSH configuration
-print_info "Setting up SSH configuration..."
+# 2. Setup SSH configuration (smart enhancement)
+print_info "Enhancing SSH configuration..."
 
 mkdir -p "$HOME/.ssh"
 chmod 700 "$HOME/.ssh"
 
 # Check for existing SSH config
 if [[ -f "$HOME/.ssh/config" ]]; then
-    # Append our config if not already present
-    if ! grep -q "# Snitcher Remote Access Configuration" "$HOME/.ssh/config"; then
+    print_info "Found existing SSH config - will enhance rather than replace"
+
+    # Check if our enhancements are already present
+    if ! grep -q "# Snitcher SSH Configuration Enhancement" "$HOME/.ssh/config"; then
+        print_info "Adding smart routing enhancements to existing SSH config"
         echo "" >> "$HOME/.ssh/config"
-        cat "$CONFIG_DIR/ssh/config" >> "$HOME/.ssh/config"
-        print_info "Appended SSH configuration"
+        cat "$CONFIG_DIR/ssh/config-enhancement" >> "$HOME/.ssh/config"
+        print_info "✅ Enhanced SSH config with smart routing"
+        print_info "Your existing SSH hosts (crtr, prtr, drtr) still work for local access"
+        print_info "New smart hosts available: crtr-smart, prtr-smart, drtr-smart"
+        print_info "Explicit remote hosts: crtr-remote, prtr-remote, drtr-remote"
     else
-        print_warn "SSH configuration already present, skipping"
+        print_warn "SSH enhancements already present, skipping"
     fi
 else
+    # No existing config - install full config
     install_file "$CONFIG_DIR/ssh/config" "$HOME/.ssh/config" "SSH config"
     chmod 600 "$HOME/.ssh/config"
+    print_info "Installed complete SSH configuration"
 fi
 
 # 3. Setup Git configuration (if not exists)

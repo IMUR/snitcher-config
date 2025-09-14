@@ -1,0 +1,57 @@
+# Snitcher SSH Configuration Enhancement
+# APPEND this to your existing ~/.ssh/config (don't replace it!)
+
+# Remote gateway access (for when you're off the local network)
+Host gateway cooperator-remote remote-gateway
+    HostName 47.155.237.161
+    User crtr
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+
+# Enhanced cluster access with smart routing
+# These add ProxyCommand to your existing hosts for automatic remote access
+
+# Smart routing versions (try direct first, fallback to gateway)
+Host crtr-smart
+    HostName 192.168.254.10
+    User crtr
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+    ProxyCommand bash -c "nc -w 1 %h %p 2>/dev/null || ssh gateway -W %h:%p"
+
+Host prtr-smart
+    HostName 192.168.254.20
+    User prtr
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+    ProxyCommand bash -c "nc -w 1 %h %p 2>/dev/null || ssh gateway -W %h:%p"
+
+Host drtr-smart
+    HostName 192.168.254.30
+    User drtr
+    IdentitiesOnly yes
+    IdentityFile ~/.ssh/id_ed25519
+    ProxyCommand bash -c "nc -w 1 %h %p 2>/dev/null || ssh gateway -W %h:%p"
+
+# Explicit remote access (when you know you're remote)
+Host crtr-remote
+    HostName 192.168.254.10
+    User crtr
+    ProxyJump gateway
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+
+Host prtr-remote
+    HostName 192.168.254.20
+    User prtr
+    ProxyJump gateway
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+
+Host drtr-remote
+    HostName 192.168.254.30
+    User drtr
+    ProxyJump gateway
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
