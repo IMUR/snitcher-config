@@ -72,26 +72,9 @@ alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
 
-# Cluster access functions
-cluster_ssh() {
-    local node="$1"
-    local ip=""
-
-    case "$node" in
-        crtr|cooperator) ip="192.168.254.10" ;;
-        prtr|projector)  ip="192.168.254.20" ;;
-        drtr|director)   ip="192.168.254.30" ;;
-        *) echo "Unknown node: $node"; return 1 ;;
-    esac
-
-    # Check if we can reach the node directly
-    if ping -c 1 -W 1 "$ip" &>/dev/null; then
-        # Direct connection
-        ssh "${node}@${ip}"
-    else
-        # Use jump host (replace with your public IP)
-        ssh -J crtr@47.155.237.161 "${node}@${ip}"
-    fi
+# Network detection helper (for informational purposes)
+check_local_network() {
+    ping -c 1 -W 1 192.168.254.10 &>/dev/null && echo "local" || echo "remote"
 }
 
 # Cluster shortcuts - use your existing SSH config hosts first, with smart fallbacks

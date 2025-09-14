@@ -56,32 +56,20 @@ alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
 
-# Cluster access aliases (smart detection)
-cluster_ssh() {
-    local node="$1"
-    local ip=""
+# Cluster shortcuts - use existing SSH config hosts
+alias sshcrtr='ssh crtr'  # Uses existing SSH config
+alias sshprtr='ssh prtr'  # Uses existing SSH config
+alias sshdrtr='ssh drtr'  # Uses existing SSH config
 
-    case "$node" in
-        crtr|cooperator) ip="192.168.254.10" ;;
-        prtr|projector)  ip="192.168.254.20" ;;
-        drtr|director)   ip="192.168.254.30" ;;
-        *) echo "Unknown node: $node"; return 1 ;;
-    esac
+# Smart routing alternatives (auto-detect local vs remote)
+alias sshcrtr-smart='ssh crtr-smart'
+alias sshprtr-smart='ssh prtr-smart'
+alias sshdrtr-smart='ssh drtr-smart'
 
-    # Check if we can reach the node directly
-    if ping -c 1 -W 1 "$ip" &>/dev/null; then
-        # Direct connection
-        ssh "${node}@${ip}"
-    else
-        # Use jump host (replace with your public IP)
-        ssh -J crtr@47.155.237.161 "${node}@${ip}"
-    fi
+# Network detection helper
+check_local_network() {
+    ping -c 1 -W 1 192.168.254.10 &>/dev/null && echo "local" || echo "remote"
 }
-
-# Cluster shortcuts
-alias sshcrtr='cluster_ssh crtr'
-alias sshprtr='cluster_ssh prtr'
-alias sshdrtr='cluster_ssh drtr'
 
 # Git shortcuts
 alias gs='git status'
@@ -112,7 +100,8 @@ fi
 
 # Welcome message (only for interactive shells)
 if [[ -n "$PS1" ]]; then
-    echo "Snitcher Remote Access Terminal"
-    echo "Cluster nodes: crtr, prtr, drtr"
-    echo "Use 'sshcrtr', 'sshprtr', 'sshdrtr' for smart routing"
+    echo "🌐 Snitcher Remote Access Terminal"
+    echo "📡 SSH hosts: crtr, prtr, drtr (your existing config)"
+    echo "🔧 Smart routing: crtr-smart, prtr-smart, drtr-smart (auto-detects network)"
+    echo "💡 Modern tools: eza, bat, fd, rg available"
 fi
