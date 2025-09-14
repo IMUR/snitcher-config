@@ -11,14 +11,19 @@ Snitcher is a mobile laptop that serves as a remote access point to the cluster.
 - Requires minimal dependencies
 - Focuses on SSH access rather than cluster services
 
-## Quick Setup
+## Quick Setup on Snitcher
+
+**Current Issue**: snitcher's `.zshrc` is symlinked to `/cluster-nas/configs/zsh/zshrc` which fails when remote.
 
 ```bash
 # Clone this repo on snitcher
 git clone https://github.com/IMUR/snitcher-config.git ~/.config/snitcher-config
 
-# Run the setup script
+# Run the setup script (will backup existing symlinks)
 ~/.config/snitcher-config/setup.sh
+
+# Restart shell to apply changes
+exec $SHELL
 ```
 
 ## What This Provides
@@ -65,10 +70,10 @@ The configuration automatically detects if you're on the local network or remote
 
 ## Requirements
 
-- Linux-based OS (Debian/Ubuntu preferred)
-- SSH client
-- Git
-- Bash or Zsh
+- ✅ Debian GNU/Linux 13 (trixie) - **CONFIRMED ON SNITCHER**
+- ✅ SSH client with cluster keys - **CONFIRMED (multiple keys setup)**
+- ✅ Git with GitHub access - **CONFIRMED (authenticated as IMUR)**
+- ✅ Zsh (default shell) - **CONFIRMED**
 
 ## Manual Configuration
 
